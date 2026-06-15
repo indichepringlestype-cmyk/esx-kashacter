@@ -1,6 +1,11 @@
 # ESX Kashacter  [Remastered]
 
 
+![Showcase](https://i.ibb.co/yFZ4XtpG/Screenshot-2026-06-15-155150.png)
+
+
+
+
 
 # You Must be name the script esx_multicharacter when you use normal es_extended
 
