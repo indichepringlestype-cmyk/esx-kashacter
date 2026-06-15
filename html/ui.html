@@ -1,0 +1,50 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" type="text/css" href="css/main.css" />
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    </head>
+    <body>
+        <div class="main-container">
+            <h2 class="ui-title">Charakter auswählen</h2>
+            <div class="character-container">
+                <div class="character-box" data-ischar="false" data-charid="1">
+                    <h3 class="character-fullname"><i class="fas fa-plus"></i></h3>
+                    <div class="character-info"><p class="character-info-new">Neuen Charakter erstellen</p></div>
+                </div>
+                <div class="character-box" data-ischar="false" data-charid="2">
+                    <h3 class="character-fullname"><i class="fas fa-plus"></i></h3>
+                    <div class="character-info"><p class="character-info-new">Neuen Charakter erstellen</p></div>
+                </div>
+                <div class="character-box" data-ischar="false" data-charid="3">
+                    <h3 class="character-fullname"><i class="fas fa-plus"></i></h3>
+                    <div class="character-info"><p class="character-info-new">Neuen Charakter erstellen</p></div>
+                </div>
+                <div class="character-box" data-ischar="false" data-charid="4">
+                    <h3 class="character-fullname"><i class="fas fa-plus"></i></h3>
+                    <div class="character-info"><p class="character-info-new">Neuen Charakter erstellen</p></div>
+                </div>
+            </div>
+            <div class="character-buttons">
+                <button class="btn btn-play" id="play-char">SPIELEN</button>
+                <button class="btn btn-delete" id="delete">LÖSCHEN</button>
+            </div>
+        </div>
+
+        <div id="delete-confirm" class="confirm-overlay">
+            <div class="confirm-box">
+                <h5 class="confirm-title">Bist du dir sicher?</h5>
+                <p class="confirm-text">Wenn du diesen Charakter löschst, werden alle Sachen gelöscht und können nicht wiederhergestellt werden.</p>
+                <div class="confirm-actions">
+                    <button id="cancel-delete" class="btn btn-cancel" type="button">ABBRECHEN</button>
+                    <button id="deletechar" class="btn btn-delete" type="button">LÖSCHEN</button>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+        <script src="js/app.js" type="text/javascript"></script>
+    </body>
+</html>
