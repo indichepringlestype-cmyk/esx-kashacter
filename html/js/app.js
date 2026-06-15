@@ -154,7 +154,9 @@ window.addEventListener("message", (event) => {
     if (firstWithChar) setActive(firstWithChar);
     else setActive(1);
 
-    showUi();
+    if (data.show === true) {
+      showUi();
+    }
   } else if (data.action === "closeui") {
     hideUi();
   }
