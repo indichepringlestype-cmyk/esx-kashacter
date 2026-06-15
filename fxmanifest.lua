@@ -3,9 +3,9 @@ game 'gta5'
 
 name 'esx_multicharacter'
 author 'indichepringlestype'
-description 'Multicharacter for ESX Legacy 1.13.5 — rewritten from esx_kashacters, compatible with the original esx_multicharacter database'
+description 'Multicharacter for ESX Legacy 1.13.5 REMAKE'
 version '1.4.2'
-repository 'https://github.com/DEIN-USERNAME/esx_multicharacter'
+repository 'https://github.com/indichepringlestype-cmyk/esx-kashacter'
 lua54 'yes'
 
 dependencies {
