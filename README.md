@@ -1,13 +1,4 @@
-# ESX Kashacter  [Remastered]
-
-
-![Showcase](https://i.ibb.co/yFZ4XtpG/Screenshot-2026-06-15-155150.png)
-
-
-
-
-
-# You Must be name the script esx_multicharacter when you use normal es_extended
+# esx_multicharacter
 
 Multicharacter system for **ESX Legacy 1.13.5**, rewritten from **esx_kashacters** and fully compatible with the original **esx_multicharacter** database.
 

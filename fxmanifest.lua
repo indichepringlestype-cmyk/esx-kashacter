@@ -4,7 +4,7 @@ game 'gta5'
 name 'esx_multicharacter'
 author 'LEXIKON'
 description 'Multicharacter for ESX Legacy 1.13.5 '
-version '1.0.0'
+version '1.0.1'
 repository 'https://github.com/LEXIKON-Dev/esx-kashacter/'
 lua54 'yes'
 
