@@ -21,8 +21,6 @@ Citizen.CreateThread(function()
 	local Characters = {}
 	local isChoosing = false
 	local uiReady = false
-	local hidePlayers = false
-	local hideLoopRunning = false
 
 	local function SerializeCharactersForNui(characters, slots)
 		local serialized = {}
@@ -89,12 +87,11 @@ Citizen.CreateThread(function()
 	end
 
 	local function WaitForWorldAtCoords(x, y, z)
-		local playerPed = PlayerPedId()
 		RequestCollisionAtCoord(x, y, z)
 		SetFocusPosAndVel(x, y, z, 0.0, 0.0, 0.0)
 
 		local timeout = GetGameTimer() + 15000
-		while not HasCollisionLoadedAroundEntity(playerPed) and GetGameTimer() < timeout do
+		while not HasCollisionLoadedAroundEntity(PlayerPedId()) and GetGameTimer() < timeout do
 			RequestCollisionAtCoord(x, y, z)
 			Citizen.Wait(0)
 		end
@@ -106,31 +103,7 @@ Citizen.CreateThread(function()
 		end
 		NewLoadSceneStop()
 
-		SetEntityCoordsNoOffset(playerPed, x, y, z, false, false, false, true)
 		Citizen.Wait(500)
-	end
-
-	local function RestorePlayerState()
-		hidePlayers = false
-
-		local playerId = PlayerId()
-		local playerPed = PlayerPedId()
-
-		MumbleSetVolumeOverride(playerId, -1.0)
-		SetEntityVisible(playerPed, true, false)
-		SetPlayerInvincible(playerId, false)
-		SetEntityInvincible(playerPed, false)
-		SetEntityCollision(playerPed, true, true)
-		SetPedCanRagdoll(playerPed, true)
-		FreezeEntityPosition(playerPed, false)
-		SetPlayerControl(playerId, true, 0)
-		ClearFocus()
-
-		for _, player in ipairs(GetActivePlayers()) do
-			if player ~= playerId then
-				NetworkConcealPlayer(player, false, false)
-			end
-		end
 	end
 
 	local function PlaySpawnCamera(spawn)
@@ -142,15 +115,12 @@ Citizen.CreateThread(function()
 		local heading = spawn.heading or spawn.w or Config.Spawn.w
 		local playerPed = PlayerPedId()
 
-		RestorePlayerState()
-		playerPed = PlayerPedId()
+		hidePlayers = false
 		SetEntityVisible(playerPed, true, false)
-		FreezeEntityPosition(playerPed, true)
 		SetEntityCoordsNoOffset(playerPed, pos.x, pos.y, pos.z, false, false, false, true)
 		SetEntityHeading(playerPed, heading)
 
 		WaitForWorldAtCoords(pos.x, pos.y, pos.z)
-		SetEntityCollision(playerPed, true, true)
 
 		DestroyCameras()
 		SetupSkyCamera()
@@ -245,19 +215,11 @@ Citizen.CreateThread(function()
 		SetupSkyCamera()
 
 		ESX.UI.Menu.CloseAll()
-		hidePlayers = false
-		hideLoopRunning = false
-		Citizen.Wait(100)
 		StartLoop()
 		TriggerServerEvent("esx_multicharacter:SetupCharacters")
 	end)
 
 	StartLoop = function()
-		if hideLoopRunning then
-			return
-		end
-
-		hideLoopRunning = true
 		hidePlayers = true
 		MumbleSetVolumeOverride(PlayerId(), 0.0)
 		Citizen.CreateThread(function()
@@ -281,17 +243,29 @@ Citizen.CreateThread(function()
 					SetEntityLocallyInvisible(vehicles[i])
 				end
 			end
-			hideLoopRunning = false
+			local playerId, playerPed = PlayerId(), PlayerPedId()
+			MumbleSetVolumeOverride(playerId, -1.0)
+			SetEntityVisible(playerPed, true, false)
+			SetPlayerInvincible(playerId, false)
+			SetEntityCollision(playerPed, true, true)
+			SetPedCanRagdoll(playerPed, true)
+			FreezeEntityPosition(playerPed, false)
 		end)
 		Citizen.CreateThread(function()
+			local playerPool = {}
 			while hidePlayers do
-				local playerId = PlayerId()
-				for _, player in ipairs(GetActivePlayers()) do
-					if player ~= playerId then
+				local players = GetActivePlayers()
+				for i = 1, #players do
+					local player = players[i]
+					if player ~= PlayerId() and not playerPool[player] then
+						playerPool[player] = true
 						NetworkConcealPlayer(player, true, true)
 					end
 				end
-				Citizen.Wait(0)
+				Citizen.Wait(500)
+			end
+			for k in pairs(playerPool) do
+				NetworkConcealPlayer(k, false, false)
 			end
 		end)
 	end
@@ -411,6 +385,8 @@ Citizen.CreateThread(function()
 
 	RegisterNetEvent('esx:playerLoaded')
 	AddEventHandler('esx:playerLoaded', function(playerData, isNew, skin)
+		local playerPed = PlayerPedId()
+
 		ClearTimecycleModifier()
 		SetTimecycleModifier('default')
 
@@ -427,7 +403,6 @@ Citizen.CreateThread(function()
 			skin.sex = sex
 		end
 
-		local playerPed = PlayerPedId()
 		FreezeEntityPosition(playerPed, true)
 		SetEntityVisible(playerPed, true, false)
 
@@ -459,16 +434,9 @@ Citizen.CreateThread(function()
 			PlaySpawnCamera(ToCoords(Config.Spawn))
 		else
 			local spawn = playerData.coords or ToCoords(Config.Spawn)
-			if type(spawn) == 'string' then
-				spawn = json.decode(spawn) or ToCoords(Config.Spawn)
-			end
-			if not spawn.x and not spawn[1] then
-				spawn = ToCoords(Config.Spawn)
-			end
 
 			local selectedCharacterSkin = spawned and Characters[spawned] and Characters[spawned].skin or nil
 			TriggerEvent('skinchanger:loadSkin', skin or selectedCharacterSkin)
-			playerPed = PlayerPedId()
 
 			DoScreenFadeOut(500)
 			while not IsScreenFadedOut() do
@@ -481,7 +449,7 @@ Citizen.CreateThread(function()
 		isChoosing = false
 		DisplayHud(true)
 		DisplayRadar(true)
-		RestorePlayerState()
+		FreezeEntityPosition(PlayerPedId(), false)
 
 		TriggerServerEvent('esx:onPlayerSpawn')
 		TriggerEvent('esx:onPlayerSpawn')
@@ -502,8 +470,6 @@ Citizen.CreateThread(function()
 		end
 		spawned = false
 		canRelog = false
-		hideLoopRunning = false
-		RestorePlayerState()
 		TriggerEvent("esx_multicharacter:SetupCharacters")
 		TriggerEvent('esx_skin:resetFirstSpawn')
 	end)

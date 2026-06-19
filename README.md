@@ -1,10 +1,5 @@
 # esx_multicharacter
 
-![Showcase](https://i.ibb.co/yFZ4XtpG/Screenshot-2026-06-15-155150.png)
-
-
-
-
 Multicharacter system for **ESX Legacy 1.13.5**, rewritten from **esx_kashacters** and fully compatible with the original **esx_multicharacter** database.
 
 > Drop-in replacement for the official `esx_multicharacter` — same events, same DB structure, no database migration required.
